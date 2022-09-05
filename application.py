@@ -17,5 +17,31 @@ def access_users(username):
         else:
             return Response(status=404)
 
+
+@app.route("/users/newuser", methods=['POST'])
+def newuser():
+    if request.method == 'POST':
+        user = request.json['name']
+        USERS.update('name', user)
+        #return access_users(request.json['name'])
+    else:
+        return Response(status=404)
+
+@app.route("/users/update", methods=['PUT'])
+def updateuser():
+    if request.method == 'PUT':
+        user = request.json['name1']
+        USERS.update('name1', user)
+    else:
+        return Response(status=404)
+
+@app.route("/users/delete", methods=['DELETE'])
+def deleteuser():
+    if request.method == 'DELETE':
+        user = request.json['name']
+        USERS.delete(user)
+    else:
+        return Response(status=404)
+
 if __name__ == "__main__":
     app.run()
