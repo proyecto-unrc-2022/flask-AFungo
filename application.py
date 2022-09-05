@@ -21,24 +21,26 @@ def access_users(username):
 @app.route("/users/newuser", methods=['POST'])
 def newuser():
     if request.method == 'POST':
-        USERS.update(name=request.json['name'])
+        USERS.update(request.json)
         return jsonify(USERS.get('name'))
     else:
         return Response(status=404)
 
-@app.route("/users/update", methods=['PUT'])
-def updateuser():
+
+@app.route("/users/update/<username>", methods=['PUT'])
+def updateuser(username):
     if request.method == 'PUT':
-        user = request.json['name1']
-        USERS.update('name1', user)
+        USERS.update(username=request.json)
+        return jsonify(USERS.get(username))
     else:
         return Response(status=404)
 
-@app.route("/users/delete", methods=['DELETE'])
-def deleteuser():
+@app.route("/users/delete/<username>", methods=['DELETE'])
+def deleteuser(username):
     if request.method == 'DELETE':
-        user = request.json['name']
-        USERS.delete(user)
+        user_info = USERS.get(username)
+        USERS.pop(username)
+        return jsonify(user_info)
     else:
         return Response(status=404)
 

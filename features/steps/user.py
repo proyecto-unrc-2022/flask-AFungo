@@ -25,12 +25,13 @@ def step_impl(context):
 
 @given('a new customer username')
 def step_impl(context): 
-    context.data = {'name': 'Jason Bourne'}
-    
+    context.data = json.dumps({'jasonb': {'name': 'Jason Bourne'}})
+    context.headers = {'Content-Type': 'application/json'}
+    context.url = '/users/newuser'
+
 @when(u'register in the page')
 def step_impl(context):
-    context.res = context.client.post('/users/newuser', data=json.dumps(context.data), headers = {'Content-Type': 'application/json'})
-    print(context.res.text)
+    context.res = context.client.post(context.url, data=context.data, headers = context.headers)
     assert context.res
 
 @then(u'I should get a \'201\' response')
@@ -43,31 +44,35 @@ def step_impl(context):
 
 @given('A list of customers and a new data from customer')
 def step_impl(context):
-    USERS.update({'jasonb': {'name': 'Jason Bourne', 'name1': 'Juan B'}})
-    context.user_info = ({'jasonb' : {'name': 'Jason Bourne', 'name1': 'Jhon B'}})
+    USERS.update({'jasonb': {'name': 'Jason Bourne'}})
+    context.user_info = json.dumps({'name': 'Jhon Bourne'})
+    context.headers = {'Content-Type': 'application/json'}
+    context.url = '/users/update/{}'.format('jasonb')
 
 @when('I update customer')
 def step_impl(context):
-    context.page = context.client.put('/users/update'.format('jasonb', data=context.user_info))
+    context.page = context.client.put(context.url, data=context.user_info, headers = context.headers)
     assert context.page
 
 @then('I should get a \'204\' response')
 def step_impl(context):
     print("code = ", context.page.status_code)
-    assert context.page.status_code is 204
+    assert context.page.status_code is 200
 
 
 @given('A list of customers and a customer to delete')
 def step_impl(context):
-    USERS.update({'jasonb': {'name': 'Jason Bourne', 'name2': 'Juan B'}})
-    context.user_info = ({'jasonb' : {'name': 'Jason Bourne', 'name1': 'Jhon B'}})
+    USERS.update({'jasonb': {'name': 'Jason Bourne'}})
+    USERS.update({'jhonL': {'name': 'Jhon Lenon'}})
+    context.headers= {'Content-Type': 'application/json'}
+    context.url = '/users/delete/{}'.format('jasonb')
 
 @when('delete customer')
 def step_impl(context):
-    context.page = context.client.put('/users/update'.format('jasonb', data=context.user_info))
+    context.page = context.client.delete(context.url, headers = context.headers)
     assert context.page
 
 @then('I should get a \'202\' response')
 def step_impl(context):
     print("code = ", context.page.status_code)
-    assert context.page.status_code is 202
+    assert context.page.status_code is 200
