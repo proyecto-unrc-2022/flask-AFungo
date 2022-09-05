@@ -22,7 +22,7 @@ def access_users(username):
 def newuser():
     if request.method == 'POST':
         USERS.update(request.json)
-        return jsonify(USERS.get('name'))
+        return jsonify(USERS)
     else:
         return Response(status=404)
 
@@ -30,7 +30,7 @@ def newuser():
 @app.route("/users/update/<username>", methods=['PUT'])
 def updateuser(username):
     if request.method == 'PUT':
-        USERS.update(username=request.json)
+        USERS.update({username : request.json})
         return jsonify(USERS.get(username))
     else:
         return Response(status=404)
@@ -40,7 +40,7 @@ def deleteuser(username):
     if request.method == 'DELETE':
         user_info = USERS.get(username)
         USERS.pop(username)
-        return jsonify(user_info)
+        return jsonify(USERS)
     else:
         return Response(status=404)
 

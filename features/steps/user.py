@@ -2,6 +2,7 @@ import json
 from behave import *
 from application import USERS
 
+#Scenario: Retrieve a customers details
 @given('some users are in the system')
 def step_impl(context):
     USERS.update({'jasonb': {'name': 'Jason Bourne'}})
@@ -18,11 +19,11 @@ def step_impl(context):
 @then(u'the following user details are returned')
 def step_impl(context):
     # assert context.table[0].cells[0] in context.page.text
+    print(context.page.text)
     assert "Jason Bourne" in context.page.text
 
 
-
-
+#Scenario: Create a new customer
 @given('a new customer username')
 def step_impl(context): 
     context.data = json.dumps({'jasonb': {'name': 'Jason Bourne'}})
@@ -31,17 +32,19 @@ def step_impl(context):
 
 @when(u'register in the page')
 def step_impl(context):
-    context.res = context.client.post(context.url, data=context.data, headers = context.headers)
-    assert context.res
+    context.page = context.client.post(context.url, data=context.data, headers = context.headers)
+    assert context.page
 
 @then(u'I should get a \'201\' response')
 def step_impl(context): 
-    print("code = ", context.res.status_code)
-    assert context.res.status_code is 200
+    print("code = ", context.page.status_code)
+    assert context.page.status_code is 200
 
+@then('new user are in the list of users')
+def step_impl(context):
+    assert 'jasonb' in context.page.text
 
-
-
+# Scenario: Update a user from the Users data store
 @given('A list of customers and a new data from customer')
 def step_impl(context):
     USERS.update({'jasonb': {'name': 'Jason Bourne'}})
@@ -59,7 +62,11 @@ def step_impl(context):
     print("code = ", context.page.status_code)
     assert context.page.status_code is 200
 
+@then('update user details are returned')
+def step_impl(context):
+    assert 'Jhon Bourne' in context.page.text
 
+#Scenario: Delete a existing customer
 @given('A list of customers and a customer to delete')
 def step_impl(context):
     USERS.update({'jasonb': {'name': 'Jason Bourne'}})
@@ -76,3 +83,7 @@ def step_impl(context):
 def step_impl(context):
     print("code = ", context.page.status_code)
     assert context.page.status_code is 200
+
+@then('user arent in the list of users')
+def step_impl(context):
+    assert 'jasonb' not in context.page.text
