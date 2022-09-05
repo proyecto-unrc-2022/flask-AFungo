@@ -25,17 +25,18 @@ def step_impl(context):
 
 @given('a new customer username')
 def step_impl(context): 
-    context.body = [{'name': 'Jason Bourne'}]
-
+    context.data = {'name': 'Jason Bourne'}
+    
 @when(u'register in the page')
 def step_impl(context):
-    context.res = context.client.post('/users/newuser'.format('jasonb'), data=json.dumps(context.body))
+    context.res = context.client.post('/users/newuser', data=json.dumps(context.data), headers = {'Content-Type': 'application/json'})
+    print(context.res.text)
     assert context.res
 
 @then(u'I should get a \'201\' response')
 def step_impl(context): 
-    print("Error = ", context.res.status_code)
-    assert context.res.status_code is 201
+    print("code = ", context.res.status_code)
+    assert context.res.status_code is 200
 
 
 
@@ -52,7 +53,7 @@ def step_impl(context):
 
 @then('I should get a \'204\' response')
 def step_impl(context):
-    print("Error = ", context.page.status_code)
+    print("code = ", context.page.status_code)
     assert context.page.status_code is 204
 
 
@@ -68,5 +69,5 @@ def step_impl(context):
 
 @then('I should get a \'202\' response')
 def step_impl(context):
-    print("Error = ", context.page.status_code)
+    print("code = ", context.page.status_code)
     assert context.page.status_code is 202

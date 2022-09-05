@@ -21,9 +21,8 @@ def access_users(username):
 @app.route("/users/newuser", methods=['POST'])
 def newuser():
     if request.method == 'POST':
-        user = request.json['name']
-        USERS.update('name', user)
-        #return access_users(request.json['name'])
+        USERS.update(name=request.json['name'])
+        return jsonify(USERS.get('name'))
     else:
         return Response(status=404)
 
